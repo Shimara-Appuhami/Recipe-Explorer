@@ -1,98 +1,368 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import {
+  BorderRadius,
+  Colors,
+  FontSizes,
+  Shadows,
+  Spacing,
+} from "@/constants/theme";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import React from "react";
+import {
+  Dimensions,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+const { width } = Dimensions.get("window");
 
-export default function HomeScreen() {
+interface Category {
+  id: string;
+  title: string;
+  subtitle: string;
+  image: string;
+  route: string;
+  icon: string;
+}
+
+const categories: Category[] = [
+  {
+    id: "1",
+    title: "Breakfast",
+    subtitle: "Morning delights to energize",
+    image: "https://www.themealdb.com/images/media/meals/kcv6hj1598733479.jpg",
+    route: "Breakfast",
+    icon: "sunny",
+  },
+  {
+    id: "2",
+    title: "Dinner",
+    subtitle: "Hearty meals for the evening",
+    image: "https://www.themealdb.com/images/media/meals/ssrrrs1503664277.jpg",
+    route: "Beef",
+    icon: "restaurant",
+  },
+  {
+    id: "3",
+    title: "Sweets",
+    subtitle: "Indulge in sweet perfection",
+    image: "https://www.themealdb.com/images/media/meals/wxywrq1468235067.jpg",
+    route: "Dessert",
+    icon: "ice-cream",
+  },
+  {
+    id: "4",
+    title: "Pasta",
+    subtitle: "Italian classics & more",
+    image: "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg",
+    route: "Pasta",
+    icon: "nutrition",
+  },
+  {
+    id: "5",
+    title: "Seafood",
+    subtitle: "Fresh from the ocean",
+    image: "https://www.themealdb.com/images/media/meals/1548772327.jpg",
+    route: "Seafood",
+    icon: "fish",
+  },
+];
+
+export default function HomeTab() {
+  const handleCategoryPress = (category: Category) => {
+    router.push({
+      pathname: "/(tabs)/recipes",
+      params: { category: category.route },
+    } as any);
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* featured Category */}
+        <View style={styles.featuredSection}>
+          <Text style={styles.sectionTitle}>Explore Categories</Text>
+          <TouchableOpacity
+            style={styles.featuredCard}
+            onPress={() => handleCategoryPress(categories[0])}
+            activeOpacity={0.9}
+          >
+            <Image
+              source={{ uri: categories[0].image }}
+              style={styles.featuredImage}
+              resizeMode="cover"
             />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+            <View style={styles.featuredOverlay} />
+            <View style={styles.featuredContent}>
+              <View style={styles.featuredBadge}>
+                <Ionicons
+                  name={categories[0].icon as any}
+                  size={20}
+                  color={Colors.primary}
+                />
+                <Text style={styles.featuredBadgeText}>Popular</Text>
+              </View>
+              <Text style={styles.featuredTitle}>{categories[0].title}</Text>
+              <Text style={styles.featuredSubtitle}>
+                {categories[0].subtitle}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        {/* Grid Categories */}
+        <View style={styles.gridSection}>
+          <Text style={styles.sectionTitle}>More Categories</Text>
+          <View style={styles.grid}>
+            {categories.slice(1).map((category) => (
+              <TouchableOpacity
+                key={category.id}
+                style={styles.gridCard}
+                onPress={() => handleCategoryPress(category)}
+                activeOpacity={0.9}
+              >
+                <Image
+                  source={{ uri: category.image }}
+                  style={styles.gridImage}
+                  resizeMode="cover"
+                />
+                <View style={styles.gridOverlay} />
+                <View style={styles.gridContent}>
+                  <View style={styles.iconContainer}>
+                    <Ionicons
+                      name={category.icon as any}
+                      size={28}
+                      color={Colors.textWhite}
+                    />
+                  </View>
+                  <Text style={styles.gridTitle}>{category.title}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  scrollView: {
+    flex: 1,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
+  scrollContent: {
+    paddingTop: Spacing.xl,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    backgroundColor: Colors.cardBackground,
+    ...Shadows.small,
+  },
+  menuButton: {
+    width: 44,
+    height: 44,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  menuIcon: {
+    width: 24,
+    gap: 4,
+  },
+  menuLine: {
+    height: 3,
+    backgroundColor: Colors.textPrimary,
+    borderRadius: 2,
+  },
+  headerCenter: {
+    flex: 1,
+    alignItems: "center",
+  },
+  appTitle: {
+    fontSize: FontSizes.lg,
+    fontWeight: "700",
+    color: Colors.textPrimary,
+  },
+  locationContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    backgroundColor: Colors.background,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+  },
+  locationText: {
+    fontSize: FontSizes.sm,
+    fontWeight: "600",
+    color: Colors.textPrimary,
+  },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  searchButton: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  profileButton: {
+    position: "relative",
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: Colors.primary,
+  },
+  onlineIndicator: {
+    position: "absolute",
     bottom: 0,
-    left: 0,
-    position: 'absolute',
+    right: 0,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: Colors.success,
+    borderWidth: 2,
+    borderColor: Colors.cardBackground,
+  },
+  greeting: {
+    fontSize: FontSizes.md,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.xs,
+  },
+  headerTitle: {
+    fontSize: FontSizes.xl,
+    fontWeight: "700",
+    color: Colors.textPrimary,
+  },
+  notificationButton: {
+    width: 44,
+    height: 44,
+    borderRadius: BorderRadius.full,
+    backgroundColor: Colors.primaryLight,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  featuredSection: {
+    padding: Spacing.lg,
+  },
+  sectionTitle: {
+    fontSize: FontSizes.lg,
+    fontWeight: "700",
+    color: Colors.textPrimary,
+    marginBottom: Spacing.md,
+  },
+  featuredCard: {
+    height: 220,
+    borderRadius: BorderRadius.xl,
+    overflow: "hidden",
+    ...Shadows.large,
+  },
+  featuredImage: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+  },
+  featuredOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+  },
+  featuredContent: {
+    flex: 1,
+    padding: Spacing.lg,
+    justifyContent: "flex-end",
+  },
+  featuredBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    backgroundColor: Colors.cardBackground,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+    alignSelf: "flex-start",
+    marginBottom: Spacing.md,
+  },
+  featuredBadgeText: {
+    fontSize: FontSizes.sm,
+    fontWeight: "600",
+    color: Colors.primary,
+  },
+  featuredTitle: {
+    fontSize: FontSizes.xxxl,
+    fontWeight: "700",
+    color: Colors.textWhite,
+    marginBottom: Spacing.xs,
+  },
+  featuredSubtitle: {
+    fontSize: FontSizes.md,
+    color: Colors.textWhite,
+    opacity: 0.9,
+  },
+  gridSection: {
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.xl,
+  },
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.md,
+  },
+  gridCard: {
+    width: (width - Spacing.lg * 2 - Spacing.md) / 2,
+    height: 160,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    ...Shadows.medium,
+  },
+  gridImage: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+  },
+  gridOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.35)",
+  },
+  gridContent: {
+    flex: 1,
+    padding: Spacing.md,
+    justifyContent: "space-between",
+  },
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: BorderRadius.md,
+    backgroundColor: "rgba(255, 255, 255, 0.25)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  gridTitle: {
+    fontSize: FontSizes.lg,
+    fontWeight: "700",
+    color: Colors.textWhite,
+    textShadowColor: "rgba(0, 0, 0, 0.75)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
 });
